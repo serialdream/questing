@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<title>Quest Log</title>
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quest Log">
+<meta name="theme-color" content="#f6f3e7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background:#f0ede0; }
+  body { font-family: 'Quicksand', sans-serif; color:#4a5d3a; }
+  .font-display { font-family: 'Fraunces', serif; }
+  #app { min-height:100vh; padding-bottom: 40px; }
+  .sparkle-bg { background: linear-gradient(180deg,#f6f3e7 0%,#eef2df 45%,#f0ede0 100%);
+    background-image: radial-gradient(circle at 20% 30%, rgba(243,201,221,0.08) 0, transparent 40%),
+                       radial-gradient(circle at 80% 70%, rgba(180,160,255,0.08) 0, transparent 40%),
+                       linear-gradient(180deg,#f6f3e7 0%,#eef2df 45%,#f0ede0 100%);
+    min-height:100vh; padding-top: env(safe-area-inset-top); }
+  .px5 { padding-left:20px; padding-right:20px; }
+  .header { padding-top:32px; padding-bottom:16px; }
+  .row { display:flex; align-items:center; justify-content:space-between; }
+  .eyebrow { color:#7a9c68; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin:0; }
+  h1 { font-family:'Fraunces',serif; font-style:italic; font-size:24px; color:#e8708f; margin:2px 0 0; font-weight:600; }
+  .pts-big { font-family:'Fraunces',serif; font-weight:600; font-size:30px; color:#f4a3b8; text-align:right; line-height:1; }
+  .pts-label { font-size:10px; color:#7a9c68; text-transform:uppercase; letter-spacing:1px; text-align:right; }
+  .card-box { margin-top:20px; background:rgba(30,21,48,0.6); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
+  .card-box-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .card-box-top span:first-child { font-size:12px; color:#6b8a52; font-weight:600; }
+  .card-box-top span:last-child { font-size:12px; color:#7a9c68; }
+  .bar-track { height:8px; background:#e3ead2; border-radius:99px; overflow:hidden; }
+  .bar-fill { height:100%; background:linear-gradient(90deg,#f4a3b8,#9dc07f); border-radius:99px; transition:width .4s ease; }
+  .card-note { font-size:10px; color:#8a9d78; margin-top:8px; }
+  .tabs { display:flex; gap:8px; overflow-x:auto; padding:0 20px 8px; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab { flex-shrink:0; padding:8px 14px; border-radius:99px; font-size:12px; font-weight:600; border:1px solid #cddbb8; background:#e3ead2; color:#6b8a52; white-space:nowrap; }
+  .tab.active { background:#f4a3b8; color:#4a5d3a; border-color:#f4a3b8; }
+  .tab.done { background:#dde8cc; color:#4a7a3a; }
+  .panel { margin:12px 20px 0; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; overflow:hidden; }
+  .task { width:100%; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #dde8cc; background:none; border-left:none; border-right:none; border-top:none; text-align:left; }
+  .task:last-child { border-bottom:none; }
+  .task.done { background:rgba(57,48,79,0.6); }
+  .task span.label { font-size:14px; font-weight:500; color:#4a5d3a; }
+  .task.done span.label { color:#8a9d78; text-decoration:line-through; }
+  .check { width:24px; height:24px; border-radius:99px; border:2px solid #a8b894; flex-shrink:0; margin-left:12px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#4a5d3a; }
+  .task.done .check { background:#f4a3b8; border-color:#f4a3b8; }
+  .bike-box { margin:16px 20px 0; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
+  .bike-top { display:flex; align-items:center; justify-content:space-between; }
+  .bike-top .left { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; }
+  .bike-top .count { font-size:12px; color:#7a9c68; }
+  .bike-controls { display:flex; gap:12px; margin-top:12px; }
+  .btn-round { width:36px; height:36px; border-radius:99px; background:#e3ead2; border:1px solid #cddbb8; color:#6b8a52; font-size:18px; }
+  .btn-bike { flex:1; border-radius:99px; background:linear-gradient(90deg,#f4a3b8,#9dc07f); color:#fbf9f0; font-weight:700; font-size:14px; border:none; padding:10px; }
+  .rewards-btn { margin:16px 20px 0; width:calc(100% - 40px); display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:18px; background:#eef2df; border:1px solid #a8b894; color:#4a5d3a; font-size:14px; font-weight:600; }
+  .stats-row { display:flex; gap:12px; margin:16px 20px 0; }
+  .stat-box { flex:1; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; padding:14px; text-align:center; }
+  .stat-box .num { font-family:'Fraunces',serif; font-weight:600; font-size:18px; }
+  .stat-box .lbl { font-size:10px; color:#8a9d78; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  button { cursor:pointer; }
+  #toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); background:#f4a3b8; color:#4a5d3a; padding:10px 16px; border-radius:99px; font-size:14px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:100; }
+  #toast.show { opacity:1; transform:translateX(-50%) translateY(-6px); }
+  #modalOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:flex-end; justify-content:center; z-index:200; }
+  #modalOverlay.show { display:flex; }
+  #modalSheet { background:#f6f3e7; width:100%; max-width:480px; border-radius:24px 24px 0 0; padding:20px 20px 32px; border-top:1px solid #cddbb8; max-height:80vh; overflow-y:auto; }
+  .modal-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .modal-top h2 { font-family:'Fraunces',serif; font-style:italic; font-size:20px; color:#e8708f; margin:0; }
+  .modal-close { background:none; border:none; color:#7a9c68; font-size:22px; }
+  .modal-sub { font-size:12px; color:#8a9d78; margin-bottom:14px; }
+  .tier { border-radius:18px; border:1px solid #dde8cc; background:rgba(36,25,52,0.4); padding:14px; margin-bottom:10px; opacity:0.6; }
+  .tier.afford { border-color:#f4a3b8; background:rgba(59,42,82,0.6); opacity:1; }
+  .tier-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
+  .tier-top .name { font-size:14px; font-weight:600; }
+  .tier-top .cost { font-size:12px; color:#7a9c68; }
+  .tier-examples { font-size:11px; color:#8a9d78; margin-bottom:10px; }
+  .tier-btn { width:100%; padding:9px; border-radius:99px; font-size:12px; font-weight:700; border:none; background:#dde8cc; color:#a8b894; }
+  .tier.afford .tier-btn { background:#f4a3b8; color:#4a5d3a; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<div id="modalOverlay">
+  <div id="modalSheet"></div>
+</div>
+
+<script>
+const ROOMS = [
+  { id: "bed1", label: "Bedroom 1", tasks: ["Make bed", "Clear floor", "Laundry away", "Dust/wipe surfaces"] },
+  { id: "bed2", label: "Bedroom 2", tasks: ["Make bed", "Clear floor", "Laundry away", "Dust/wipe surfaces"] },
+  { id: "bath", label: "Bathroom", tasks: ["Wipe counter/sink", "Clean toilet", "Clean shower/tub", "Take out trash"] },
+  { id: "kitchen", label: "Kitchen", tasks: ["Dishes done", "Wipe counters", "Sweep floor", "Take out trash"] },
+  { id: "living", label: "Living Room", tasks: ["Clear clutter", "Vacuum/sweep", "Tidy surfaces"] },
+  { id: "cat", label: "Cat Care", tasks: ["Scoop litter box", "Refill food/water", "Wipe litter area"] },
+];
+const POINTS = { task: 5, bike20: 15 };
+const CARD_THRESHOLD = 100;
+const REWARD_TIERS = [
+  { threshold: 20, label: "Small win", examples: ["Episode of a show, guilt-free", "New boba flavor (small size)", "20 min of a cozy game"] },
+  { threshold: 50, label: "Solid effort", examples: ["Karaoke night pick", "New nail polish / small self-care item", "Bath + face mask night"] },
+  { threshold: 100, label: "Big milestone", examples: ["$25 toward a card payment + a treat", "New anime merch piece", "Bike accessory upgrade"] },
+  { threshold: 200, label: "Major streak", examples: ["Splurge boba + snack combo", "New kawaii phone/desk item", "Extra $50 toward a card"] },
+];
+const STORAGE_KEY = "quest-log-state-v1";
+
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s.lastActiveDate !== todayStr()) {
+        s.completedToday = {};
+        s.bikeToday = 0;
+        s.lastActiveDate = todayStr();
+      }
+      return s;
+    }
+  } catch (e) {}
+  return { points: 0, lifetimePoints: 0, history: [], completedToday: {}, bikeToday: 0, lastActiveDate: todayStr(), redeemed: [] };
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+let state = loadState();
+let activeRoom = ROOMS[0].id;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function toggleTask(roomId, idx, label) {
+  const key = roomId + ':' + idx;
+  if (state.completedToday[key]) {
+    delete state.completedToday[key];
+    state.points -= POINTS.task;
+    state.lifetimePoints -= POINTS.task;
+  } else {
+    state.completedToday[key] = true;
+    state.points += POINTS.task;
+    state.lifetimePoints += POINTS.task;
+    state.history.unshift({ date: todayStr(), label, points: POINTS.task, type: 'task' });
+    state.history = state.history.slice(0,100);
+    showToast('+' + POINTS.task + ' · ' + label);
+  }
+  saveState(); render();
+}
+
+function addBike() {
+  state.points += POINTS.bike20;
+  state.lifetimePoints += POINTS.bike20;
+  state.bikeToday += 1;
+  state.history.unshift({ date: todayStr(), label: 'Bike ride (20 min)', points: POINTS.bike20, type: 'bike' });
+  state.history = state.history.slice(0,100);
+  saveState(); render();
+  showToast('+' + POINTS.bike20 + ' · 20 min on the bike 🚲');
+}
+function removeBike() {
+  if (state.bikeToday <= 0) return;
+  const idx = state.history.findIndex(h => h.type === 'bike' && h.date === todayStr());
+  if (idx >= 0) state.history.splice(idx,1);
+  state.points -= POINTS.bike20;
+  state.lifetimePoints -= POINTS.bike20;
+  state.bikeToday -= 1;
+  saveState(); render();
+}
+
+function redeem(threshold, label) {
+  if (state.points < threshold) return;
+  state.points -= threshold;
+  state.redeemed.unshift({ date: todayStr(), tier: label, threshold });
+  saveState(); render();
+  showToast('Redeemed: ' + label + ' 🎉');
+  closeModal();
+}
+
+function openModal() {
+  const sheet = document.getElementById('modalSheet');
+  sheet.innerHTML = `
+    <div class="modal-top"><h2>Redeem</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-sub">You have ${state.points} points. Food's fine sometimes — just not the default.</div>
+    ${REWARD_TIERS.map(t => {
+      const afford = state.points >= t.threshold;
+      return `<div class="tier ${afford ? 'afford' : ''}">
+        <div class="tier-top"><span class="name">${t.label}</span><span class="cost">${t.threshold} pts</span></div>
+        <div class="tier-examples">${t.examples.join(' · ')}</div>
+        <button class="tier-btn" ${afford ? `onclick="redeem(${t.threshold},'${t.label}')"` : 'disabled'}>
+          ${afford ? 'Redeem' : 'Need ' + (t.threshold - state.points) + ' more'}
+        </button>
+      </div>`;
+    }).join('')}
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+function setRoom(id) { activeRoom = id; render(); }
+
+function render() {
+  const room = ROOMS.find(r => r.id === activeRoom);
+  const cardProgress = Math.min(100, ((state.points % CARD_THRESHOLD) / CARD_THRESHOLD) * 100);
+
+  const tabsHtml = ROOMS.map(r => {
+    const doneCount = r.tasks.filter((_, i) => state.completedToday[r.id + ':' + i]).length;
+    const allDone = doneCount === r.tasks.length;
+    const cls = activeRoom === r.id ? 'tab active' : (allDone ? 'tab done' : 'tab');
+    return `<button class="${cls}" onclick="setRoom('${r.id}')">${r.label} ${allDone ? '✓' : doneCount + '/' + r.tasks.length}</button>`;
+  }).join('');
+
+  const tasksHtml = room.tasks.map((t, i) => {
+    const key = room.id + ':' + i;
+    const done = !!state.completedToday[key];
+    return `<button class="task ${done ? 'done' : ''}" onclick="toggleTask('${room.id}',${i},'${room.label}: ${t}')">
+      <span class="label">${t}</span>
+      <span class="check">${done ? '✓' : ''}</span>
+    </button>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="sparkle-bg">
+      <div class="px5 header row">
+        <div>
+          <p class="eyebrow">Quest Log</p>
+          <h1>for a tidy little kingdom 🐈‍⬛</h1>
+        </div>
+        <div>
+          <div class="pts-big">${state.points}</div>
+          <div class="pts-label">points</div>
+        </div>
+      </div>
+
+      <div class="px5">
+        <div class="card-box">
+          <div class="card-box-top"><span>Next card payment boost</span><span>${state.points % CARD_THRESHOLD}/${CARD_THRESHOLD}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${cardProgress}%"></div></div>
+          <div class="card-note">Every ${CARD_THRESHOLD} pts banked = a nudge to send extra to a card</div>
+        </div>
+      </div>
+
+      <div class="tabs" style="margin-top:16px;">${tabsHtml}</div>
+
+      <div class="panel">${tasksHtml}</div>
+
+      <div class="bike-box">
+        <div class="bike-top">
+          <div class="left">🚲 Bike rides today</div>
+          <div class="count">${state.bikeToday} × 20min</div>
+        </div>
+        <div class="bike-controls">
+          <button class="btn-round" onclick="removeBike()">–</button>
+          <button class="btn-bike" onclick="addBike()">+ Log 20 min ride (+${POINTS.bike20})</button>
+        </div>
+      </div>
+
+      <button class="rewards-btn" onclick="openModal()">
+        <span>🎁 Redeem rewards</span><span>›</span>
+      </button>
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="num">${state.lifetimePoints}</div><div class="lbl">lifetime pts</div></div>
+        <div class="stat-box"><div class="num">${state.redeemed.length}</div><div class="lbl">rewards claimed</div></div>
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
