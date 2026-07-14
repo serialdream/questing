@@ -8,19 +8,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quest Log">
-<meta name="theme-color" content="#f6f3e7">
+<meta name="theme-color" content="#fce9ec">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin:0; padding:0; background:#f0ede0; }
+  html, body { margin:0; padding:0; background:#fce9ec; }
   body { font-family: 'Quicksand', sans-serif; color:#4a5d3a; }
   .font-display { font-family: 'Fraunces', serif; }
   #app { min-height:100vh; padding-bottom: 40px; }
-  .sparkle-bg { background: linear-gradient(180deg,#f6f3e7 0%,#eef2df 45%,#f0ede0 100%);
+  .sparkle-bg { background: linear-gradient(180deg,#fdf1f0 0%,#fbe7e9 45%,#fce9ec 100%);
     background-image: radial-gradient(circle at 20% 30%, rgba(243,201,221,0.08) 0, transparent 40%),
                        radial-gradient(circle at 80% 70%, rgba(180,160,255,0.08) 0, transparent 40%),
-                       linear-gradient(180deg,#f6f3e7 0%,#eef2df 45%,#f0ede0 100%);
+                       linear-gradient(180deg,#fdf1f0 0%,#fbe7e9 45%,#fce9ec 100%);
     min-height:100vh; padding-top: env(safe-area-inset-top); }
   .px5 { padding-left:20px; padding-right:20px; }
   .header { padding-top:32px; padding-bottom:16px; }
@@ -29,7 +29,7 @@
   h1 { font-family:'Fraunces',serif; font-style:italic; font-size:24px; color:#e8708f; margin:2px 0 0; font-weight:600; }
   .pts-big { font-family:'Fraunces',serif; font-weight:600; font-size:30px; color:#f4a3b8; text-align:right; line-height:1; }
   .pts-label { font-size:10px; color:#7a9c68; text-transform:uppercase; letter-spacing:1px; text-align:right; }
-  .card-box { margin-top:20px; background:rgba(30,21,48,0.6); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
+  .card-box { margin-top:20px; background:rgba(255,255,255,0.55); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
   .card-box-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .card-box-top span:first-child { font-size:12px; color:#6b8a52; font-weight:600; }
   .card-box-top span:last-child { font-size:12px; color:#7a9c68; }
@@ -41,7 +41,7 @@
   .tab { flex-shrink:0; padding:8px 14px; border-radius:99px; font-size:12px; font-weight:600; border:1px solid #cddbb8; background:#e3ead2; color:#6b8a52; white-space:nowrap; }
   .tab.active { background:#f4a3b8; color:#4a5d3a; border-color:#f4a3b8; }
   .tab.done { background:#dde8cc; color:#4a7a3a; }
-  .panel { margin:12px 20px 0; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; overflow:hidden; }
+  .panel { margin:12px 20px 0; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; overflow:hidden; }
   .task { width:100%; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #dde8cc; background:none; border-left:none; border-right:none; border-top:none; text-align:left; }
   .task:last-child { border-bottom:none; }
   .task.done { background:rgba(57,48,79,0.6); }
@@ -49,7 +49,7 @@
   .task.done span.label { color:#8a9d78; text-decoration:line-through; }
   .check { width:24px; height:24px; border-radius:99px; border:2px solid #a8b894; flex-shrink:0; margin-left:12px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#4a5d3a; }
   .task.done .check { background:#f4a3b8; border-color:#f4a3b8; }
-  .bike-box { margin:16px 20px 0; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
+  .bike-box { margin:16px 20px 0; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
   .bike-top { display:flex; align-items:center; justify-content:space-between; }
   .bike-top .left { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; }
   .bike-top .count { font-size:12px; color:#7a9c68; }
@@ -58,7 +58,7 @@
   .btn-bike { flex:1; border-radius:99px; background:linear-gradient(90deg,#f4a3b8,#9dc07f); color:#fbf9f0; font-weight:700; font-size:14px; border:none; padding:10px; }
   .rewards-btn { margin:16px 20px 0; width:calc(100% - 40px); display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:18px; background:#eef2df; border:1px solid #a8b894; color:#4a5d3a; font-size:14px; font-weight:600; }
   .stats-row { display:flex; gap:12px; margin:16px 20px 0; }
-  .stat-box { flex:1; background:rgba(36,25,52,0.7); border:1px solid #cddbb8; border-radius:18px; padding:14px; text-align:center; }
+  .stat-box { flex:1; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; padding:14px; text-align:center; }
   .stat-box .num { font-family:'Fraunces',serif; font-weight:600; font-size:18px; }
   .stat-box .lbl { font-size:10px; color:#8a9d78; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
   button { cursor:pointer; }
@@ -71,8 +71,8 @@
   .modal-top h2 { font-family:'Fraunces',serif; font-style:italic; font-size:20px; color:#e8708f; margin:0; }
   .modal-close { background:none; border:none; color:#7a9c68; font-size:22px; }
   .modal-sub { font-size:12px; color:#8a9d78; margin-bottom:14px; }
-  .tier { border-radius:18px; border:1px solid #dde8cc; background:rgba(36,25,52,0.4); padding:14px; margin-bottom:10px; opacity:0.6; }
-  .tier.afford { border-color:#f4a3b8; background:rgba(59,42,82,0.6); opacity:1; }
+  .tier { border-radius:18px; border:1px solid #dde8cc; background:rgba(255,255,255,0.4); padding:14px; margin-bottom:10px; opacity:0.6; }
+  .tier.afford { border-color:#f4a3b8; background:rgba(244,163,184,0.25); opacity:1; }
   .tier-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; }
   .tier-top .name { font-size:14px; font-weight:600; }
   .tier-top .cost { font-size:12px; color:#7a9c68; }
