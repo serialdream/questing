@@ -65,6 +65,24 @@
   button { cursor:pointer; }
   #toast { position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:#f4a3b8; color:#4a5d3a; padding:10px 16px; border-radius:99px; font-size:14px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:100; }
   #toast.show { opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+  #sparkleLayer { position:fixed; inset:0; pointer-events:none; z-index:250; overflow:hidden; }
+  .sparkle-particle { position:absolute; pointer-events:none; opacity:0; animation: sparkleFly 0.85s ease-out forwards; }
+  @keyframes sparkleFly {
+    0%   { opacity:0; transform: translate(-50%, 0) scale(0.4) rotate(0deg); }
+    15%  { opacity:1; }
+    100% { opacity:0; transform: translate(calc(-50% + var(--dx)), var(--dy)) scale(1.1) rotate(50deg); }
+  }
+
+  .gold-sparkle-particle { position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-50%); animation-name: goldSparkleFly; animation-timing-function: cubic-bezier(.19,.85,.32,1.15); animation-fill-mode: forwards; }
+  .gold-sparkle-particle.dot { color:#e8b923; text-shadow: 0 0 8px rgba(232,185,35,0.85), 0 0 2px rgba(255,255,255,0.6); }
+  .gold-sparkle-particle.glyph { filter: drop-shadow(0 0 4px rgba(232,185,35,0.6)); }
+  @keyframes goldSparkleFly {
+    0%   { opacity:0; transform: translate(-50%,-50%) scale(0.3) rotate(0deg); }
+    10%  { opacity:1; transform: translate(-50%,-50%) scale(1.15) rotate(20deg); }
+    55%  { opacity:1; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dyBurst))) scale(1) rotate(190deg); }
+    100% { opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dyFall))) scale(0.5) rotate(340deg); }
+  }
   #modalOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:flex-end; justify-content:center; z-index:200; }
   #modalOverlay.show { display:flex; }
   #modalSheet { background:#f6f3e7; width:100%; max-width:480px; border-radius:24px 24px 0 0; padding:20px 20px 32px; border-top:1px solid #cddbb8; max-height:80vh; overflow-y:auto; }
@@ -80,6 +98,19 @@
   .tier-examples { font-size:11px; color:#8a9d78; margin-bottom:10px; }
   .tier-btn { width:100%; padding:9px; border-radius:99px; font-size:12px; font-weight:700; border:none; background:#dde8cc; color:#a8b894; }
   .tier.afford .tier-btn { background:#f4a3b8; color:#4a5d3a; }
+
+  .modal-divider { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#7a9c68; margin:18px 0 10px; padding-top:8px; border-top:1px solid #dde8cc; }
+  .custom-tier { position:relative; padding-top:14px; }
+  .rw-delete { position:absolute; top:10px; right:10px; background:none; border:none; color:#c98a99; font-size:13px; padding:2px 6px; }
+  .rw-image { width:100%; max-height:120px; object-fit:cover; border-radius:12px; margin-bottom:10px; }
+  .rw-link { color:#e8708f; text-decoration:none; font-weight:700; }
+  .add-reward-form { display:flex; flex-direction:column; gap:8px; }
+  .rw-row { display:flex; gap:8px; }
+  .rw-row .card-input:first-child { flex:1; }
+  select.card-input { flex:1.4; -webkit-appearance:none; appearance:none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a9c68'><path d='M7 10l5 5 5-5z'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; background-size:16px; padding-right:32px; }
+  .rw-preview-row { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+  .rw-points-preview { font-size:13px; font-weight:700; color:#e8708f; }
+  .add-rw-btn { width:auto; padding:9px 18px; }
 
   /* Bottom nav */
   #bottomNav { position:fixed; bottom:0; left:0; right:0; display:flex; background:rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-top:1px solid #dde8cc; padding-bottom: env(safe-area-inset-bottom); z-index:150; }
@@ -106,6 +137,7 @@
 <body>
 <div id="app"></div>
 <div id="toast"></div>
+<div id="sparkleLayer"></div>
 <div id="modalOverlay">
   <div id="modalSheet"></div>
 </div>
@@ -120,7 +152,7 @@ const ROOMS = [
   { id: "cat", label: "Churro Care", tasks: ["Scoop litter box", "Refill food/water", "Wipe litter area"] },
 ];
 const POINTS = { task: 5, bike20: 15 };
-const CARD_PAYMENT_POINTS = 25;
+const CARD_PAYMENT_POINTS = 15;
 const CARD_DOLLARS_PER_MILESTONE = 100;
 const REWARD_TIERS = [
   { threshold: 20, label: "Small win", examples: ["Episode of a show, guilt-free", "New boba flavor (small size)", "20 min of a cozy game"] },
@@ -128,6 +160,22 @@ const REWARD_TIERS = [
   { threshold: 100, label: "Big milestone", examples: ["$25 toward a card payment + a treat", "New anime merch piece", "Bike accessory upgrade"] },
   { threshold: 200, label: "Major streak", examples: ["Splurge boba + snack combo", "New kawaii phone/desk item", "Extra $50 toward a card"] },
 ];
+
+const REWARD_CATEGORIES = {
+  food:      { label: "Food & boba",          multiplier: 1.25, emoji: "🧋" },
+  selfcare:  { label: "Self-care & beauty",    multiplier: 1.0,  emoji: "💅" },
+  hobby:     { label: "Hobby / anime / gaming",multiplier: 1.0,  emoji: "🎮" },
+  outing:    { label: "Experience / outing",   multiplier: 1.0,  emoji: "🎡" },
+  splurge:   { label: "Big splurge / purchase",multiplier: 0.9,  emoji: "✨" },
+};
+const POINTS_PER_DOLLAR = 4;
+
+function calcRewardPoints(dollarCost, categoryKey) {
+  const mult = (REWARD_CATEGORIES[categoryKey] || { multiplier: 1 }).multiplier;
+  const raw = dollarCost * POINTS_PER_DOLLAR * mult;
+  const rounded = Math.round(raw / 5) * 5;
+  return Math.max(5, rounded);
+}
 const STORAGE_KEY = "quest-log-state-v1";
 
 function todayStr() { return new Date().toISOString().slice(0,10); }
@@ -174,6 +222,7 @@ function loadState() {
       if (s.lifetimeCardDollars === undefined) s.lifetimeCardDollars = 0;
       if (s.cardDollarsCarry === undefined) s.cardDollarsCarry = 0;
       if (!s.weeklyLog) s.weeklyLog = [];
+      if (!s.customRewards) s.customRewards = [];
       s.weeklyLog.forEach(w => {
         if (w.cardPayments === undefined) w.cardPayments = 0;
         if (w.cardDollars === undefined) w.cardDollars = 0;
@@ -191,7 +240,7 @@ function loadState() {
   return {
     points: 0, lifetimePoints: 0, history: [], completedToday: {}, lastActiveDate: todayStr(), redeemed: [],
     weekStartDate: currentWeekStart, weeklyStats: freshWeekStats(), weeklyLog: [],
-    lifetimeCardPayments: 0, lifetimeCardDollars: 0, cardDollarsCarry: 0
+    lifetimeCardPayments: 0, lifetimeCardDollars: 0, cardDollarsCarry: 0, customRewards: []
   };
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -206,6 +255,66 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function sparkleBurst() {
+  const layer = document.getElementById('sparkleLayer');
+  if (!layer) return;
+  const glyphs = ['✨','🍓','🍵'];
+  const count = 7;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.className = 'sparkle-particle';
+    s.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+    const angle = (Math.random() * 360) * (Math.PI / 180);
+    const dist = 40 + Math.random() * 50;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist - 20;
+    s.style.setProperty('--dx', dx + 'px');
+    s.style.setProperty('--dy', dy + 'px');
+    s.style.left = '50%';
+    s.style.bottom = '90px';
+    s.style.fontSize = (12 + Math.random() * 10) + 'px';
+    s.style.animationDelay = (Math.random() * 0.1) + 's';
+    layer.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }
+}
+
+function goldSparkleBurst(x, y) {
+  const layer = document.getElementById('sparkleLayer');
+  if (!layer) return;
+  // fall back to screen center if no click coords were available
+  const originX = (typeof x === 'number') ? x : window.innerWidth / 2;
+  const originY = (typeof y === 'number') ? y : window.innerHeight / 2;
+  const glyphs = ['✨','⭐','🌟','💫'];
+  const count = 22;
+  const maxReach = Math.max(window.innerWidth, window.innerHeight) * 0.6;
+
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    const useDot = Math.random() < 0.4;
+    s.className = 'gold-sparkle-particle ' + (useDot ? 'dot' : 'glyph');
+    s.textContent = useDot ? '●' : glyphs[Math.floor(Math.random() * glyphs.length)];
+
+    const angle = Math.random() * 360 * (Math.PI / 180);
+    const dist = 30 + Math.random() * maxReach;
+    const dx = Math.cos(angle) * dist;
+    const dyBurst = Math.sin(angle) * dist * 0.55 - 40; // initial burst, upward-biased
+    const fall = 120 + Math.random() * 220; // gravity pulls it further down after the burst
+    const dyFall = dyBurst + fall;
+
+    s.style.setProperty('--dx', dx + 'px');
+    s.style.setProperty('--dyBurst', dyBurst + 'px');
+    s.style.setProperty('--dyFall', dyFall + 'px');
+    s.style.left = originX + 'px';
+    s.style.top = originY + 'px';
+    s.style.fontSize = (useDot ? (6 + Math.random() * 6) : (14 + Math.random() * 14)) + 'px';
+    s.style.animationDelay = (Math.random() * 0.12) + 's';
+    s.style.animationDuration = (1.2 + Math.random() * 0.7) + 's';
+    layer.appendChild(s);
+    setTimeout(() => s.remove(), 2200);
+  }
 }
 
 function toggleTask(roomId, idx, label) {
@@ -225,6 +334,7 @@ function toggleTask(roomId, idx, label) {
     state.history.unshift({ date: todayStr(), label, points: POINTS.task, type: 'task' });
     state.history = state.history.slice(0,100);
     showToast('+' + POINTS.task + ' · ' + label);
+    sparkleBurst();
   }
   saveState(); render();
 }
@@ -238,6 +348,7 @@ function addBike() {
   state.history = state.history.slice(0,100);
   saveState(); render();
   showToast('+' + POINTS.bike20 + ' · 20 min on the bike 🚲');
+  sparkleBurst();
 }
 function removeBike() {
   if (state.weeklyStats.bikeRides <= 0) return;
@@ -295,17 +406,78 @@ function addCardPayment(amount) {
   } else {
     showToast(`Logged $${amount.toFixed(2)} · $${state.cardDollarsCarry.toFixed(2)}/${CARD_DOLLARS_PER_MILESTONE} toward next 25 pts`);
   }
+  sparkleBurst();
 
   saveState(); render();
 }
 
-function redeem(threshold, label) {
+function redeem(threshold, label, evt) {
   if (state.points < threshold) return;
   state.points -= threshold;
   state.redeemed.unshift({ date: todayStr(), tier: label, threshold });
+  const x = evt ? evt.clientX : undefined;
+  const y = evt ? evt.clientY : undefined;
   saveState(); render();
   showToast('Redeemed: ' + label + ' 🎉');
+  goldSparkleBurst(x, y);
   closeModal();
+}
+
+function addCustomReward() {
+  const nameEl = document.getElementById('rwName');
+  const costEl = document.getElementById('rwCost');
+  const catEl = document.getElementById('rwCategory');
+  const linkEl = document.getElementById('rwLink');
+  const imgEl = document.getElementById('rwImage');
+
+  const name = (nameEl.value || '').trim();
+  const cost = parseFloat((costEl.value || '').replace(/[^0-9.]/g, ''));
+  const category = catEl.value;
+
+  if (!name) { showToast('Give it a name first'); return; }
+  if (!cost || cost <= 0) { showToast('Enter a $ cost'); return; }
+
+  const points = calcRewardPoints(cost, category);
+  const reward = {
+    id: 'r' + Date.now(),
+    name, dollarCost: cost, category, points,
+    link: (linkEl.value || '').trim(),
+    image: (imgEl.value || '').trim(),
+  };
+  state.customRewards.unshift(reward);
+  saveState();
+  openModal(); // re-render modal with new reward + reset form
+  showToast(`Added · ${points} pts`);
+}
+
+function deleteCustomReward(id) {
+  state.customRewards = state.customRewards.filter(r => r.id !== id);
+  saveState();
+  openModal();
+}
+
+function redeemCustom(id, evt) {
+  const reward = state.customRewards.find(r => r.id === id);
+  if (!reward || state.points < reward.points) return;
+  state.points -= reward.points;
+  state.redeemed.unshift({ date: todayStr(), tier: reward.name, threshold: reward.points });
+  const x = evt ? evt.clientX : undefined;
+  const y = evt ? evt.clientY : undefined;
+  saveState(); render();
+  showToast('Redeemed: ' + reward.name + ' 🎉');
+  goldSparkleBurst(x, y);
+  closeModal();
+}
+
+function previewRewardPoints() {
+  const costEl = document.getElementById('rwCost');
+  const catEl = document.getElementById('rwCategory');
+  const preview = document.getElementById('rwPointsPreview');
+  if (!costEl || !catEl || !preview) return;
+  const cost = parseFloat((costEl.value || '').replace(/[^0-9.]/g, ''));
+  if (!cost || cost <= 0) { preview.textContent = ''; return; }
+  const points = calcRewardPoints(cost, catEl.value);
+  preview.textContent = `= ${points} pts`;
 }
 
 function openModal() {
@@ -318,11 +490,48 @@ function openModal() {
       return `<div class="tier ${afford ? 'afford' : ''}">
         <div class="tier-top"><span class="name">${t.label}</span><span class="cost">${t.threshold} pts</span></div>
         <div class="tier-examples">${t.examples.join(' · ')}</div>
-        <button class="tier-btn" ${afford ? `onclick="redeem(${t.threshold},'${t.label}')"` : 'disabled'}>
+        <button class="tier-btn" ${afford ? `onclick="redeem(${t.threshold},'${t.label}',event)"` : 'disabled'}>
           ${afford ? 'Redeem' : 'Need ' + (t.threshold - state.points) + ' more'}
         </button>
       </div>`;
     }).join('')}
+
+    ${state.customRewards.length > 0 ? `
+      <div class="modal-divider">Your rewards</div>
+      ${state.customRewards.map(r => {
+        const afford = state.points >= r.points;
+        const cat = REWARD_CATEGORIES[r.category] || { emoji: '🎁', label: '' };
+        const nameHtml = r.link
+          ? `<a href="${r.link}" target="_blank" rel="noopener" class="rw-link">${r.name} ↗</a>`
+          : r.name;
+        return `<div class="tier custom-tier ${afford ? 'afford' : ''}">
+          <button class="rw-delete" onclick="deleteCustomReward('${r.id}')" title="Remove">✕</button>
+          ${r.image ? `<img src="${r.image}" class="rw-image" onerror="this.style.display='none'" />` : ''}
+          <div class="tier-top"><span class="name">${cat.emoji} ${nameHtml}</span><span class="cost">${r.points} pts</span></div>
+          <div class="tier-examples">$${r.dollarCost.toFixed(2)} · ${cat.label}</div>
+          <button class="tier-btn" ${afford ? `onclick="redeemCustom('${r.id}',event)"` : 'disabled'}>
+            ${afford ? 'Redeem' : 'Need ' + (r.points - state.points) + ' more'}
+          </button>
+        </div>`;
+      }).join('')}
+    ` : ''}
+
+    <div class="modal-divider">Add your own reward</div>
+    <div class="add-reward-form">
+      <input id="rwName" class="card-input" type="text" placeholder="Reward name" />
+      <div class="rw-row">
+        <input id="rwCost" class="card-input" type="text" inputmode="decimal" placeholder="$ cost" oninput="sanitizeCardInput(this); previewRewardPoints();" />
+        <select id="rwCategory" class="card-input" onchange="previewRewardPoints()">
+          ${Object.entries(REWARD_CATEGORIES).map(([key, c]) => `<option value="${key}">${c.emoji} ${c.label}</option>`).join('')}
+        </select>
+      </div>
+      <input id="rwLink" class="card-input" type="url" placeholder="Link (optional)" />
+      <input id="rwImage" class="card-input" type="url" placeholder="Image URL (optional)" />
+      <div class="rw-preview-row">
+        <span id="rwPointsPreview" class="rw-points-preview"></span>
+        <button class="tier-btn add-rw-btn" onclick="addCustomReward()">+ Add reward</button>
+      </div>
+    </div>
   `;
   document.getElementById('modalOverlay').classList.add('show');
 }
@@ -367,7 +576,7 @@ function renderTodayView() {
     <div class="px5 header row">
       <div>
         <p class="eyebrow">Quest Log</p>
-        <h1>for a tidy little kingdom 🐱</h1>
+        <h1>for a tidy little kingdom 🐈</h1>
       </div>
       <div>
         <div class="pts-big">${state.points}</div>
@@ -396,7 +605,7 @@ function renderTodayView() {
         <div class="left">💳 Card $ this week</div>
         <div class="count">$${state.weeklyStats.cardDollars.toFixed(2)}</div>
       </div>
-      <div class="bike-sub">$${state.cardDollarsCarry.toFixed(2)}/${CARD_DOLLARS_PER_MILESTONE} toward next +${CARD_PAYMENT_POINTS} pts · logging isn't the reward, it's a task like any other</div>
+      <div class="bike-sub">$${state.cardDollarsCarry.toFixed(2)}/${CARD_DOLLARS_PER_MILESTONE} toward next +${CARD_PAYMENT_POINTS} pts</div>
       <div class="card-input-row">
         <input id="cardAmountInput" class="card-input" type="text" inputmode="decimal" placeholder="$ amount paid" oninput="sanitizeCardInput(this)" />
         <button class="btn-bike" onclick="submitCardPayment()">+ Add</button>
@@ -404,7 +613,7 @@ function renderTodayView() {
     </div>
 
     <button class="rewards-btn" onclick="openModal()">
-      <span>🎁 Redeem rewards</span><span>›</span>
+      <span>✨ Redeem rewards</span><span>›</span>
     </button>
 
     <div class="stats-row">
