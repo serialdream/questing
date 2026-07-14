@@ -16,7 +16,7 @@
   html, body { margin:0; padding:0; background:#fce9ec; }
   body { font-family: 'Quicksand', sans-serif; color:#4a5d3a; }
   .font-display { font-family: 'Fraunces', serif; }
-  #app { min-height:100vh; padding-bottom: 40px; }
+  #app { min-height:100vh; padding-bottom: 90px; }
   .sparkle-bg { background: linear-gradient(180deg,#fdf1f0 0%,#fbe7e9 45%,#fce9ec 100%);
     background-image: radial-gradient(circle at 20% 30%, rgba(243,201,221,0.08) 0, transparent 40%),
                        radial-gradient(circle at 80% 70%, rgba(180,160,255,0.08) 0, transparent 40%),
@@ -29,10 +29,6 @@
   h1 { font-family:'Fraunces',serif; font-style:italic; font-size:24px; color:#e8708f; margin:2px 0 0; font-weight:600; }
   .pts-big { font-family:'Fraunces',serif; font-weight:600; font-size:30px; color:#f4a3b8; text-align:right; line-height:1; }
   .pts-label { font-size:10px; color:#7a9c68; text-transform:uppercase; letter-spacing:1px; text-align:right; }
-  .card-box { margin-top:20px; background:rgba(255,255,255,0.55); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
-  .card-box-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-  .card-box-top span:first-child { font-size:12px; color:#6b8a52; font-weight:600; }
-  .card-box-top span:last-child { font-size:12px; color:#7a9c68; }
   .bar-track { height:8px; background:#e3ead2; border-radius:99px; overflow:hidden; }
   .bar-fill { height:100%; background:linear-gradient(90deg,#f4a3b8,#9dc07f); border-radius:99px; transition:width .4s ease; }
   .card-note { font-size:10px; color:#8a9d78; margin-top:8px; }
@@ -44,7 +40,7 @@
   .panel { margin:12px 20px 0; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; overflow:hidden; }
   .task { width:100%; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #dde8cc; background:none; border-left:none; border-right:none; border-top:none; text-align:left; }
   .task:last-child { border-bottom:none; }
-  .task.done { background:rgba(57,48,79,0.6); }
+  .task.done { background:rgba(221,232,204,0.5); }
   .task span.label { font-size:14px; font-weight:500; color:#4a5d3a; }
   .task.done span.label { color:#8a9d78; text-decoration:line-through; }
   .check { width:24px; height:24px; border-radius:99px; border:2px solid #a8b894; flex-shrink:0; margin-left:12px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#4a5d3a; }
@@ -53,7 +49,12 @@
   .bike-top { display:flex; align-items:center; justify-content:space-between; }
   .bike-top .left { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; }
   .bike-top .count { font-size:12px; color:#7a9c68; }
+  .bike-sub { font-size:10px; color:#8a9d78; margin-top:2px; }
   .bike-controls { display:flex; gap:12px; margin-top:12px; }
+  .card-input-row { display:flex; gap:10px; margin-top:12px; }
+  .card-input { flex:1; min-width:0; padding:10px 14px; border-radius:99px; border:1px solid #cddbb8; background:#fff; font-family:'Quicksand',sans-serif; font-size:14px; color:#4a5d3a; }
+  .card-input:focus { outline:none; border-color:#f4a3b8; }
+  .card-input-row .btn-bike { flex:0 0 auto; padding:10px 18px; }
   .btn-round { width:36px; height:36px; border-radius:99px; background:#e3ead2; border:1px solid #cddbb8; color:#6b8a52; font-size:18px; }
   .btn-bike { flex:1; border-radius:99px; background:linear-gradient(90deg,#f4a3b8,#9dc07f); color:#fbf9f0; font-weight:700; font-size:14px; border:none; padding:10px; }
   .rewards-btn { margin:16px 20px 0; width:calc(100% - 40px); display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-radius:18px; background:#eef2df; border:1px solid #a8b894; color:#4a5d3a; font-size:14px; font-weight:600; }
@@ -62,7 +63,7 @@
   .stat-box .num { font-family:'Fraunces',serif; font-weight:600; font-size:18px; }
   .stat-box .lbl { font-size:10px; color:#8a9d78; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
   button { cursor:pointer; }
-  #toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); background:#f4a3b8; color:#4a5d3a; padding:10px 16px; border-radius:99px; font-size:14px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:100; }
+  #toast { position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:#f4a3b8; color:#4a5d3a; padding:10px 16px; border-radius:99px; font-size:14px; font-weight:700; box-shadow:0 8px 24px rgba(0,0,0,0.3); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:100; }
   #toast.show { opacity:1; transform:translateX(-50%) translateY(-6px); }
   #modalOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:flex-end; justify-content:center; z-index:200; }
   #modalOverlay.show { display:flex; }
@@ -79,6 +80,27 @@
   .tier-examples { font-size:11px; color:#8a9d78; margin-bottom:10px; }
   .tier-btn { width:100%; padding:9px; border-radius:99px; font-size:12px; font-weight:700; border:none; background:#dde8cc; color:#a8b894; }
   .tier.afford .tier-btn { background:#f4a3b8; color:#4a5d3a; }
+
+  /* Bottom nav */
+  #bottomNav { position:fixed; bottom:0; left:0; right:0; display:flex; background:rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-top:1px solid #dde8cc; padding-bottom: env(safe-area-inset-bottom); z-index:150; }
+  .nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 0 8px; background:none; border:none; color:#a8b894; font-size:10px; font-weight:600; font-family:'Quicksand',sans-serif; }
+  .nav-btn .icon { font-size:19px; }
+  .nav-btn.active { color:#e8708f; }
+
+  /* Progress view */
+  .progress-header { padding: 28px 20px 4px; }
+  .progress-header h2 { font-family:'Fraunces',serif; font-style:italic; font-size:22px; color:#e8708f; margin:0 0 2px; }
+  .progress-header p { font-size:12px; color:#8a9d78; margin:0; }
+  .week-card { margin:14px 20px 0; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; padding:16px; }
+  .week-card.current { border-color:#f4a3b8; background:rgba(244,163,184,0.15); }
+  .week-card-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .week-card-top .label { font-size:13px; font-weight:700; color:#4a5d3a; }
+  .week-card-top .range { font-size:10px; color:#8a9d78; }
+  .week-metrics { display:flex; gap:10px; }
+  .week-metric { flex:1; text-align:center; }
+  .week-metric .n { font-family:'Fraunces',serif; font-weight:600; font-size:17px; color:#4a5d3a; }
+  .week-metric .l { font-size:9px; color:#8a9d78; text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+  .empty-note { margin:20px; font-size:12px; color:#8a9d78; text-align:center; }
 </style>
 </head>
 <body>
@@ -90,15 +112,16 @@
 
 <script>
 const ROOMS = [
-  { id: "bed1", label: "Bedroom 1", tasks: ["Make bed", "Clear floor", "Laundry away", "Dust/wipe surfaces"] },
-  { id: "bed2", label: "Bedroom 2", tasks: ["Make bed", "Clear floor", "Laundry away", "Dust/wipe surfaces"] },
-  { id: "bath", label: "Bathroom", tasks: ["Wipe counter/sink", "Clean toilet", "Clean shower/tub", "Take out trash"] },
+  { id: "bed1", label: "Bedroom", tasks: ["Make bed", "Clear floor", "Laundry away", "Dust/wipe surfaces"] },
+  { id: "bed2", label: "Office/Guest Room", tasks: ["Clear desk/workspace", "Put hobby supplies away", "Make guest bed", "Fresh linens & towels out", "Clear closet/drawer space for guest", "Vacuum/dust room"] },
+  { id: "bath", label: "Bathroom", tasks: ["Wipe counter/sink", "Clean toilet", "Clean shower/tub", "Clean floor", "Take out trash"] },
   { id: "kitchen", label: "Kitchen", tasks: ["Dishes done", "Wipe counters", "Sweep floor", "Take out trash"] },
   { id: "living", label: "Living Room", tasks: ["Clear clutter", "Vacuum/sweep", "Tidy surfaces"] },
-  { id: "cat", label: "Cat Care", tasks: ["Scoop litter box", "Refill food/water", "Wipe litter area"] },
+  { id: "cat", label: "Churro Care", tasks: ["Scoop litter box", "Refill food/water", "Wipe litter area"] },
 ];
 const POINTS = { task: 5, bike20: 15 };
-const CARD_THRESHOLD = 100;
+const CARD_PAYMENT_POINTS = 25;
+const CARD_DOLLARS_PER_MILESTONE = 100;
 const REWARD_TIERS = [
   { threshold: 20, label: "Small win", examples: ["Episode of a show, guilt-free", "New boba flavor (small size)", "20 min of a cozy game"] },
   { threshold: 50, label: "Solid effort", examples: ["Karaoke night pick", "New nail polish / small self-care item", "Bath + face mask night"] },
@@ -109,25 +132,73 @@ const STORAGE_KEY = "quest-log-state-v1";
 
 function todayStr() { return new Date().toISOString().slice(0,10); }
 
+// Monday-start week key, e.g. "2026-07-13"
+function getWeekStart(dateObj) {
+  const d = new Date(dateObj);
+  const day = d.getDay(); // 0=Sun..6=Sat
+  const diff = (day === 0 ? -6 : 1) - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d.toISOString().slice(0,10);
+}
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0,10);
+}
+function formatRange(weekStart) {
+  const end = addDays(weekStart, 6);
+  const opts = { month: 'short', day: 'numeric' };
+  const s = new Date(weekStart + 'T00:00:00').toLocaleDateString('en-US', opts);
+  const e = new Date(end + 'T00:00:00').toLocaleDateString('en-US', opts);
+  return s + ' – ' + e;
+}
+
+function freshWeekStats() { return { tasksCompleted: 0, bikeRides: 0, cardPayments: 0, cardDollars: 0, pointsEarned: 0 }; }
+
 function loadState() {
+  const currentWeekStart = getWeekStart(new Date());
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const s = JSON.parse(raw);
       if (s.lastActiveDate !== todayStr()) {
         s.completedToday = {};
-        s.bikeToday = 0;
         s.lastActiveDate = todayStr();
+      }
+      if (!s.weekStartDate) s.weekStartDate = currentWeekStart;
+      if (!s.weeklyStats) s.weeklyStats = freshWeekStats();
+      if (s.weeklyStats.cardPayments === undefined) s.weeklyStats.cardPayments = 0;
+      if (s.weeklyStats.cardDollars === undefined) s.weeklyStats.cardDollars = 0;
+      if (s.lifetimeCardPayments === undefined) s.lifetimeCardPayments = 0;
+      if (s.lifetimeCardDollars === undefined) s.lifetimeCardDollars = 0;
+      if (s.cardDollarsCarry === undefined) s.cardDollarsCarry = 0;
+      if (!s.weeklyLog) s.weeklyLog = [];
+      s.weeklyLog.forEach(w => {
+        if (w.cardPayments === undefined) w.cardPayments = 0;
+        if (w.cardDollars === undefined) w.cardDollars = 0;
+      });
+      if (s.weekStartDate !== currentWeekStart) {
+        // archive the finished week, then reset weekly counters
+        s.weeklyLog.unshift({ weekStart: s.weekStartDate, ...s.weeklyStats });
+        s.weeklyLog = s.weeklyLog.slice(0, 26);
+        s.weeklyStats = freshWeekStats();
+        s.weekStartDate = currentWeekStart;
       }
       return s;
     }
   } catch (e) {}
-  return { points: 0, lifetimePoints: 0, history: [], completedToday: {}, bikeToday: 0, lastActiveDate: todayStr(), redeemed: [] };
+  return {
+    points: 0, lifetimePoints: 0, history: [], completedToday: {}, lastActiveDate: todayStr(), redeemed: [],
+    weekStartDate: currentWeekStart, weeklyStats: freshWeekStats(), weeklyLog: [],
+    lifetimeCardPayments: 0, lifetimeCardDollars: 0, cardDollarsCarry: 0
+  };
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
 let state = loadState();
 let activeRoom = ROOMS[0].id;
+let activeView = 'today'; // 'today' | 'progress'
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -143,10 +214,14 @@ function toggleTask(roomId, idx, label) {
     delete state.completedToday[key];
     state.points -= POINTS.task;
     state.lifetimePoints -= POINTS.task;
+    state.weeklyStats.tasksCompleted -= 1;
+    state.weeklyStats.pointsEarned -= POINTS.task;
   } else {
     state.completedToday[key] = true;
     state.points += POINTS.task;
     state.lifetimePoints += POINTS.task;
+    state.weeklyStats.tasksCompleted += 1;
+    state.weeklyStats.pointsEarned += POINTS.task;
     state.history.unshift({ date: todayStr(), label, points: POINTS.task, type: 'task' });
     state.history = state.history.slice(0,100);
     showToast('+' + POINTS.task + ' · ' + label);
@@ -157,19 +232,70 @@ function toggleTask(roomId, idx, label) {
 function addBike() {
   state.points += POINTS.bike20;
   state.lifetimePoints += POINTS.bike20;
-  state.bikeToday += 1;
+  state.weeklyStats.bikeRides += 1;
+  state.weeklyStats.pointsEarned += POINTS.bike20;
   state.history.unshift({ date: todayStr(), label: 'Bike ride (20 min)', points: POINTS.bike20, type: 'bike' });
   state.history = state.history.slice(0,100);
   saveState(); render();
   showToast('+' + POINTS.bike20 + ' · 20 min on the bike 🚲');
 }
 function removeBike() {
-  if (state.bikeToday <= 0) return;
-  const idx = state.history.findIndex(h => h.type === 'bike' && h.date === todayStr());
+  if (state.weeklyStats.bikeRides <= 0) return;
+  const idx = state.history.findIndex(h => h.type === 'bike');
   if (idx >= 0) state.history.splice(idx,1);
   state.points -= POINTS.bike20;
   state.lifetimePoints -= POINTS.bike20;
-  state.bikeToday -= 1;
+  state.weeklyStats.bikeRides -= 1;
+  state.weeklyStats.pointsEarned -= POINTS.bike20;
+  saveState(); render();
+}
+
+function submitCardPayment() {
+  const inp = document.getElementById('cardAmountInput');
+  const raw = (inp.value || '').replace(/[^0-9.]/g, '');
+  const amount = parseFloat(raw);
+  if (!amount || amount <= 0) {
+    showToast('Enter a $ amount first');
+    return;
+  }
+  addCardPayment(amount);
+  inp.value = '';
+}
+
+function sanitizeCardInput(el) {
+  let v = el.value.replace(/[^0-9.]/g, '');
+  const firstDot = v.indexOf('.');
+  if (firstDot !== -1) {
+    v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, '');
+  }
+  el.value = v;
+}
+
+function addCardPayment(amount) {
+  state.lifetimeCardDollars += amount;
+  state.weeklyStats.cardDollars += amount;
+  state.cardDollarsCarry += amount;
+
+  let milestonesHit = 0;
+  while (state.cardDollarsCarry >= CARD_DOLLARS_PER_MILESTONE) {
+    state.cardDollarsCarry -= CARD_DOLLARS_PER_MILESTONE;
+    milestonesHit += 1;
+  }
+
+  if (milestonesHit > 0) {
+    const pts = milestonesHit * CARD_PAYMENT_POINTS;
+    state.points += pts;
+    state.lifetimePoints += pts;
+    state.weeklyStats.cardPayments += milestonesHit;
+    state.weeklyStats.pointsEarned += pts;
+    state.lifetimeCardPayments += milestonesHit;
+    state.history.unshift({ date: todayStr(), label: `Card payments hit $${CARD_DOLLARS_PER_MILESTONE} mark (+${pts})`, points: pts, type: 'card' });
+    state.history = state.history.slice(0,100);
+    showToast(`+${pts} · $${CARD_DOLLARS_PER_MILESTONE} paid down 💳`);
+  } else {
+    showToast(`Logged $${amount.toFixed(2)} · $${state.cardDollarsCarry.toFixed(2)}/${CARD_DOLLARS_PER_MILESTONE} toward next 25 pts`);
+  }
+
   saveState(); render();
 }
 
@@ -203,10 +329,23 @@ function openModal() {
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 
 function setRoom(id) { activeRoom = id; render(); }
+function setView(v) { activeView = v; render(); }
 
-function render() {
+function renderBottomNav() {
+  return `
+    <div id="bottomNav">
+      <button class="nav-btn ${activeView === 'today' ? 'active' : ''}" onclick="setView('today')">
+        <span class="icon">🏠</span><span>Today</span>
+      </button>
+      <button class="nav-btn ${activeView === 'progress' ? 'active' : ''}" onclick="setView('progress')">
+        <span class="icon">📊</span><span>Progress</span>
+      </button>
+    </div>
+  `;
+}
+
+function renderTodayView() {
   const room = ROOMS.find(r => r.id === activeRoom);
-  const cardProgress = Math.min(100, ((state.points % CARD_THRESHOLD) / CARD_THRESHOLD) * 100);
 
   const tabsHtml = ROOMS.map(r => {
     const doneCount = r.tasks.filter((_, i) => state.completedToday[r.id + ':' + i]).length;
@@ -224,51 +363,106 @@ function render() {
     </button>`;
   }).join('');
 
-  document.getElementById('app').innerHTML = `
-    <div class="sparkle-bg">
-      <div class="px5 header row">
-        <div>
-          <p class="eyebrow">Quest Log</p>
-          <h1>for a tidy little kingdom 🐈‍⬛</h1>
-        </div>
-        <div>
-          <div class="pts-big">${state.points}</div>
-          <div class="pts-label">points</div>
-        </div>
+  return `
+    <div class="px5 header row">
+      <div>
+        <p class="eyebrow">Quest Log</p>
+        <h1>for a tidy little kingdom 🐱</h1>
       </div>
-
-      <div class="px5">
-        <div class="card-box">
-          <div class="card-box-top"><span>Next card payment boost</span><span>${state.points % CARD_THRESHOLD}/${CARD_THRESHOLD}</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:${cardProgress}%"></div></div>
-          <div class="card-note">Every ${CARD_THRESHOLD} pts banked = a nudge to send extra to a card</div>
-        </div>
-      </div>
-
-      <div class="tabs" style="margin-top:16px;">${tabsHtml}</div>
-
-      <div class="panel">${tasksHtml}</div>
-
-      <div class="bike-box">
-        <div class="bike-top">
-          <div class="left">🚲 Bike rides today</div>
-          <div class="count">${state.bikeToday} × 20min</div>
-        </div>
-        <div class="bike-controls">
-          <button class="btn-round" onclick="removeBike()">–</button>
-          <button class="btn-bike" onclick="addBike()">+ Log 20 min ride (+${POINTS.bike20})</button>
-        </div>
-      </div>
-
-      <button class="rewards-btn" onclick="openModal()">
-        <span>🎁 Redeem rewards</span><span>›</span>
-      </button>
-
-      <div class="stats-row">
-        <div class="stat-box"><div class="num">${state.lifetimePoints}</div><div class="lbl">lifetime pts</div></div>
-        <div class="stat-box"><div class="num">${state.redeemed.length}</div><div class="lbl">rewards claimed</div></div>
+      <div>
+        <div class="pts-big">${state.points}</div>
+        <div class="pts-label">points</div>
       </div>
     </div>
+
+    <div class="tabs" style="margin-top:16px;">${tabsHtml}</div>
+
+    <div class="panel">${tasksHtml}</div>
+
+    <div class="bike-box">
+      <div class="bike-top">
+        <div class="left">🚲 Bike rides this week</div>
+        <div class="count">${state.weeklyStats.bikeRides} × 20min</div>
+      </div>
+      <div class="bike-sub">Tally resets Monday · week of ${formatRange(state.weekStartDate)}</div>
+      <div class="bike-controls">
+        <button class="btn-round" onclick="removeBike()">–</button>
+        <button class="btn-bike" onclick="addBike()">+ Log 20 min ride (+${POINTS.bike20})</button>
+      </div>
+    </div>
+
+    <div class="bike-box">
+      <div class="bike-top">
+        <div class="left">💳 Card $ this week</div>
+        <div class="count">$${state.weeklyStats.cardDollars.toFixed(2)}</div>
+      </div>
+      <div class="bike-sub">$${state.cardDollarsCarry.toFixed(2)}/${CARD_DOLLARS_PER_MILESTONE} toward next +${CARD_PAYMENT_POINTS} pts · logging isn't the reward, it's a task like any other</div>
+      <div class="card-input-row">
+        <input id="cardAmountInput" class="card-input" type="text" inputmode="decimal" placeholder="$ amount paid" oninput="sanitizeCardInput(this)" />
+        <button class="btn-bike" onclick="submitCardPayment()">+ Add</button>
+      </div>
+    </div>
+
+    <button class="rewards-btn" onclick="openModal()">
+      <span>🎁 Redeem rewards</span><span>›</span>
+    </button>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="num">${state.lifetimePoints}</div><div class="lbl">lifetime pts</div></div>
+      <div class="stat-box"><div class="num">$${state.lifetimeCardDollars.toFixed(0)}</div><div class="lbl">paid to cards</div></div>
+      <div class="stat-box"><div class="num">${state.redeemed.length}</div><div class="lbl">rewards claimed</div></div>
+    </div>
+  `;
+}
+
+function renderProgressView() {
+  const cw = state.weeklyStats;
+  const currentCard = `
+    <div class="week-card current">
+      <div class="week-card-top"><span class="label">This week</span><span class="range">${formatRange(state.weekStartDate)}</span></div>
+      <div class="week-metrics">
+        <div class="week-metric"><div class="n">${cw.tasksCompleted}</div><div class="l">tasks</div></div>
+        <div class="week-metric"><div class="n">${cw.bikeRides}</div><div class="l">bike rides</div></div>
+        <div class="week-metric"><div class="n">$${cw.cardDollars.toFixed(0)}</div><div class="l">to cards</div></div>
+        <div class="week-metric"><div class="n">${cw.pointsEarned}</div><div class="l">points</div></div>
+      </div>
+    </div>
+  `;
+
+  const pastCards = state.weeklyLog.map(w => `
+    <div class="week-card">
+      <div class="week-card-top"><span class="label">Week of ${formatRange(w.weekStart)}</span></div>
+      <div class="week-metrics">
+        <div class="week-metric"><div class="n">${w.tasksCompleted}</div><div class="l">tasks</div></div>
+        <div class="week-metric"><div class="n">${w.bikeRides}</div><div class="l">bike rides</div></div>
+        <div class="week-metric"><div class="n">$${w.cardDollars.toFixed(0)}</div><div class="l">to cards</div></div>
+        <div class="week-metric"><div class="n">${w.pointsEarned}</div><div class="l">points</div></div>
+      </div>
+    </div>
+  `).join('');
+
+  const emptyNote = state.weeklyLog.length === 0
+    ? `<div class="empty-note">Past weeks will show up here once this week wraps — keep going 🍓</div>`
+    : '';
+
+  return `
+    <div class="progress-header">
+      <h2>Weekly Progress</h2>
+      <p>See how this week stacks up against the last ones</p>
+    </div>
+    ${currentCard}
+    ${pastCards}
+    ${emptyNote}
+  `;
+}
+
+function render() {
+  const content = activeView === 'today' ? renderTodayView() : renderProgressView();
+  document.getElementById('app').innerHTML = `
+    <div class="sparkle-bg">
+      ${content}
+    </div>
+    ${renderBottomNav()}
   `;
 }
 
