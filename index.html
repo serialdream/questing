@@ -32,13 +32,18 @@
   .bar-track { height:8px; background:#e3ead2; border-radius:99px; overflow:hidden; }
   .bar-fill { height:100%; background:linear-gradient(90deg,#f4a3b8,#9dc07f); border-radius:99px; transition:width .4s ease; }
   .card-note { font-size:10px; color:#8a9d78; margin-top:8px; }
-  .tabs { display:flex; gap:8px; overflow-x:auto; padding:0 20px 8px; scrollbar-width:none; }
-  .tabs::-webkit-scrollbar{ display:none; }
-  .tab { flex-shrink:0; padding:8px 14px; border-radius:99px; font-size:12px; font-weight:600; border:1px solid #cddbb8; background:#e3ead2; color:#6b8a52; white-space:nowrap; }
+  .tabs { display:grid; grid-template-columns: 1fr 1fr; gap:8px; padding:0 20px 8px; }
+  .tab { padding:10px 10px; border-radius:14px; font-size:12px; font-weight:600; border:1px solid #cddbb8; background:#e3ead2; color:#6b8a52; text-align:center; white-space:normal; line-height:1.3; }
   .tab.active { background:#f4a3b8; color:#4a5d3a; border-color:#f4a3b8; }
   .tab.done { background:#dde8cc; color:#4a7a3a; }
   .panel { margin:12px 20px 0; background:rgba(255,255,255,0.6); border:1px solid #cddbb8; border-radius:18px; overflow:hidden; }
   .task { width:100%; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #dde8cc; background:none; border-left:none; border-right:none; border-top:none; text-align:left; }
+  .task.custom-task { padding:0 8px 0 0; }
+  .task-inner { flex:1; display:flex; align-items:center; justify-content:space-between; background:none; border:none; padding:14px 8px 14px 16px; text-align:left; color:inherit; font:inherit; }
+  .task-delete { flex-shrink:0; background:none; border:none; color:#c98a99; font-size:13px; padding:4px 8px; }
+  .add-task-row { display:flex; gap:8px; padding:12px 16px; align-items:center; }
+  .add-task-row .card-input { flex:1; background:#fff; }
+  .add-task-btn { flex-shrink:0; background:#f4a3b8; border-color:#f4a3b8; color:#4a5d3a; font-size:20px; font-weight:700; line-height:1; }
   .task:last-child { border-bottom:none; }
   .task.done { background:rgba(221,232,204,0.5); }
   .task span.label { font-size:14px; font-weight:500; color:#4a5d3a; }
@@ -223,6 +228,7 @@ function loadState() {
       if (s.cardDollarsCarry === undefined) s.cardDollarsCarry = 0;
       if (!s.weeklyLog) s.weeklyLog = [];
       if (!s.customRewards) s.customRewards = [];
+      if (!s.customTasks) s.customTasks = {};
       s.weeklyLog.forEach(w => {
         if (w.cardPayments === undefined) w.cardPayments = 0;
         if (w.cardDollars === undefined) w.cardDollars = 0;
@@ -240,7 +246,7 @@ function loadState() {
   return {
     points: 0, lifetimePoints: 0, history: [], completedToday: {}, lastActiveDate: todayStr(), redeemed: [],
     weekStartDate: currentWeekStart, weeklyStats: freshWeekStats(), weeklyLog: [],
-    lifetimeCardPayments: 0, lifetimeCardDollars: 0, cardDollarsCarry: 0, customRewards: []
+    lifetimeCardPayments: 0, lifetimeCardDollars: 0, cardDollarsCarry: 0, customRewards: [], customTasks: {}
   };
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -317,8 +323,7 @@ function goldSparkleBurst(x, y) {
   }
 }
 
-function toggleTask(roomId, idx, label) {
-  const key = roomId + ':' + idx;
+function toggleTask(key, label) {
   if (state.completedToday[key]) {
     delete state.completedToday[key];
     state.points -= POINTS.task;
@@ -335,6 +340,32 @@ function toggleTask(roomId, idx, label) {
     state.history = state.history.slice(0,100);
     showToast('+' + POINTS.task + ' · ' + label);
     sparkleBurst();
+  }
+  saveState(); render();
+}
+
+function addCustomTask(roomId) {
+  const input = document.getElementById('newTaskInput-' + roomId);
+  if (!input) return;
+  const label = (input.value || '').trim();
+  if (!label) { showToast('Type a task name first'); return; }
+  if (!state.customTasks[roomId]) state.customTasks[roomId] = [];
+  state.customTasks[roomId].push({ id: 'ct' + Date.now(), label });
+  input.value = '';
+  saveState(); render();
+}
+
+function deleteCustomTask(roomId, taskId) {
+  const key = roomId + ':c:' + taskId;
+  if (state.completedToday[key]) {
+    delete state.completedToday[key];
+    state.points -= POINTS.task;
+    state.lifetimePoints -= POINTS.task;
+    state.weeklyStats.tasksCompleted -= 1;
+    state.weeklyStats.pointsEarned -= POINTS.task;
+  }
+  if (state.customTasks[roomId]) {
+    state.customTasks[roomId] = state.customTasks[roomId].filter(t => t.id !== taskId);
   }
   saveState(); render();
 }
@@ -557,20 +588,46 @@ function renderTodayView() {
   const room = ROOMS.find(r => r.id === activeRoom);
 
   const tabsHtml = ROOMS.map(r => {
-    const doneCount = r.tasks.filter((_, i) => state.completedToday[r.id + ':' + i]).length;
-    const allDone = doneCount === r.tasks.length;
+    const custom = state.customTasks[r.id] || [];
+    const totalTasks = r.tasks.length + custom.length;
+    const builtinDone = r.tasks.filter((_, i) => state.completedToday[r.id + ':' + i]).length;
+    const customDone = custom.filter(t => state.completedToday[r.id + ':c:' + t.id]).length;
+    const doneCount = builtinDone + customDone;
+    const allDone = doneCount === totalTasks;
     const cls = activeRoom === r.id ? 'tab active' : (allDone ? 'tab done' : 'tab');
-    return `<button class="${cls}" onclick="setRoom('${r.id}')">${r.label} ${allDone ? '✓' : doneCount + '/' + r.tasks.length}</button>`;
+    return `<button class="${cls}" onclick="setRoom('${r.id}')">${r.label} ${allDone ? '✓' : doneCount + '/' + totalTasks}</button>`;
   }).join('');
 
-  const tasksHtml = room.tasks.map((t, i) => {
+  const builtinTasksHtml = room.tasks.map((t, i) => {
     const key = room.id + ':' + i;
     const done = !!state.completedToday[key];
-    return `<button class="task ${done ? 'done' : ''}" onclick="toggleTask('${room.id}',${i},'${room.label}: ${t}')">
+    return `<button class="task ${done ? 'done' : ''}" onclick="toggleTask('${key}','${room.label}: ${t}')">
       <span class="label">${t}</span>
       <span class="check">${done ? '✓' : ''}</span>
     </button>`;
   }).join('');
+
+  const customTasksForRoom = state.customTasks[room.id] || [];
+  const customTasksHtml = customTasksForRoom.map(t => {
+    const key = room.id + ':c:' + t.id;
+    const done = !!state.completedToday[key];
+    return `<div class="task custom-task ${done ? 'done' : ''}">
+      <button class="task-inner" onclick="toggleTask('${key}','${room.label}: ${t.label}')">
+        <span class="label">${t.label}</span>
+        <span class="check">${done ? '✓' : ''}</span>
+      </button>
+      <button class="task-delete" onclick="deleteCustomTask('${room.id}','${t.id}')" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+
+  const addTaskRow = `
+    <div class="add-task-row">
+      <input id="newTaskInput-${room.id}" class="card-input" type="text" placeholder="Add your own task…" onkeydown="if(event.key==='Enter'){addCustomTask('${room.id}')}" />
+      <button class="btn-round add-task-btn" onclick="addCustomTask('${room.id}')">+</button>
+    </div>
+  `;
+
+  const tasksHtml = builtinTasksHtml + customTasksHtml + addTaskRow;
 
   return `
     <div class="px5 header row">
